@@ -5,6 +5,7 @@
    - `source venv/bin/activate` in Linux
    - `.\venv\Scripts\activate` in Windows
    - `pip install -r requirements.txt`
+   - `pre-commit install` 
    -  Crea un archivo .env
 
    
@@ -23,6 +24,8 @@
 ### En Linux
 `pip freeze > requirements.txt`
 
+# Testear antes de hacer commit
+`pre-commit run --all-files` para checkear el formato
 
 ## Configuración de `flake8`
 Este es un fragmento de configuración para `flake8`, una herramienta de linting para Python que revisa el código en busca de errores y problemas de estilo.
