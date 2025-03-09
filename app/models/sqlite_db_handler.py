@@ -91,5 +91,16 @@ class SQLiteDBHandler(DatabaseAdapter):
         connection.close()
         if user:
             session["logged_in_user"] = username
+            session["user_group"] = user[4]
             return True
         return False
+
+    def fetch_users(self):
+        connection = self.connect()
+        if connection is None:
+            return []
+        cursor = connection.cursor()
+        cursor.execute("SELECT usuario, email, role FROM user_info")
+        users = cursor.fetchall()
+        connection.close()
+        return [{"nombre": user[0], "email": user[1], "rol": user[2]} for user in users]

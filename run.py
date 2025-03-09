@@ -18,6 +18,9 @@ dash_app = dash.Dash(
 )
 BasicAuth(dash_app, auth_func=app.config["sqlite_handler"].validate_user)
 
+# Pass the database handler to the Dash app using the server object
+app.config["sqlite_handler"] = app.config["sqlite_handler"]
+
 dash_app.title = "VASupply"
 dash_app.layout = html.Div(
     [
