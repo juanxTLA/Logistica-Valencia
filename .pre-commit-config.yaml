@@ -12,3 +12,15 @@ repos:
     rev: 6.0.1  # Use the latest version
     hooks:
       - id: isort
+  
+  - repo: local
+    hooks:
+      - id: check-app
+        name: check app
+        entry: python tests/check_app.py
+        language: python
+        types: [python]
+        additional_dependencies:
+          - Flask
+          - python-dotenv
+          - pymongo
