@@ -8,7 +8,7 @@ from dash_auth import BasicAuth
 from dotenv import load_dotenv
 
 from app import create_app
-from db_handler import validate_user
+from pages.components import navbar, register_navbar_callbacks
 
 load_dotenv()
 app = create_app()
@@ -16,11 +16,13 @@ app.secret_key = os.urandom(24).hex()
 dash_app = dash.Dash(
     __name__, server=app, use_pages=True, external_stylesheets=[dbc.themes.BOOTSTRAP]
 )
-BasicAuth(dash_app, auth_func=validate_user)
+BasicAuth(dash_app, auth_func=app.config["sqlite_handler"].validate_user)
+
 dash_app.title = "VASupply"
 dash_app.layout = html.Div(
     [
         dcc.Location(id="url", refresh=False),
+        navbar,
         html.Div(
             style={
                 "position": "fixed",
@@ -29,7 +31,7 @@ dash_app.layout = html.Div(
                 "left": "0",
                 "bottom": "0",
                 "zIndex": "-1",
-                "backgroundColor": "#defcbb",
+                "backgroundColor": "#ffffff",
                 "height": "100vh",
                 "width": "100%",
                 "font-family": "Montserrat, sans-serif",
@@ -39,5 +41,8 @@ dash_app.layout = html.Div(
     ]
 )
 
+register_navbar_callbacks(dash_app)
+
 if __name__ == "__main__":
-    app.run(debug=os.getenv("FLASK_DEBUG", "false").lower() == "true")
+    # app.run(debug=os.getenv("FLASK_DEBUG", "false").lower() == "true")
+    app.run(debug=True)
