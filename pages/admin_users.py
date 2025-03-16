@@ -3,18 +3,6 @@ import pandas as pd
 from dash import Input, Output, State, callback, dash_table, dcc, html
 from flask import current_app, session
 
-
-# Fetch the database handler from the Flask app configuration
-def get_db_handler():
-    return current_app.config["sqlite_handler"]
-
-
-# Update fetch_users to call the new method from sqlite_db_handler
-def fetch_users():
-    db_handler = get_db_handler()
-    return pd.DataFrame(db_handler.fetch_users())
-
-
 dash.register_page(__name__, path="/admin_usuarios", name="Usuarios")
 
 layout = html.Div(id="admin-users-content")
@@ -23,6 +11,8 @@ layout = html.Div(id="admin-users-content")
 @callback(Output("admin-users-content", "children"), Input("url", "pathname"))
 def display_page(pathname):
     if session.get("user_group") == "Admin":
+        db_handler = current_app.config["sqlite_handler"]
+        users_data = pd.DataFrame(db_handler.fetch_users())
         return html.Div(
             [
                 html.H1("Gestión de Usuarios"),
@@ -33,9 +23,11 @@ def display_page(pathname):
                         {"name": "Email", "id": "email", "editable": True},
                         {"name": "Rol", "id": "rol", "editable": True},
                     ],
-                    data=fetch_users().to_dict("records"),
+                    data=users_data.to_dict("records"),
                     row_deletable=True,
                     editable=True,
+                    filter_action="native",
+                    filter_options={"placeholder_text": "filtrar por ..."},
                 ),
                 html.Button(
                     "Añadir Usuario",
@@ -70,7 +62,7 @@ def add_user(n_clicks, name, password, email, rol, rows):
     if n_clicks > 0 and name and password and email and rol:
         new_row = {"nombre": name, "email": email, "rol": rol}
         rows.append(new_row)
-        db_handler = get_db_handler()
+        db_handler = current_app.config["sqlite_handler"]
         db_handler.insert(
             "user_info", {"usuario": name, "psw": password, "email": email, "role": rol}
         )
@@ -89,7 +81,7 @@ def update_or_delete_users(previous_rows, current_rows):
     previous_set = {row["nombre"]: row for row in previous_rows}
     current_set = {row["nombre"]: row for row in current_rows}
 
-    db_handler = get_db_handler()
+    db_handler = current_app.config["sqlite_handler"]
 
     # Detect deleted rows
     deleted_users = set(previous_set.keys()) - set(current_set.keys())

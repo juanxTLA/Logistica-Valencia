@@ -2,6 +2,7 @@ import os
 import sqlite3
 
 from flask import session
+from werkzeug.security import check_password_hash, generate_password_hash
 
 from app.models.database_adapter import DatabaseAdapter
 
@@ -38,8 +39,13 @@ class SQLiteDBHandler(DatabaseAdapter):
             return
         cursor = connection.cursor()
         cursor.execute(
-            f"INSERT INTO {collection} (usuario, password, rol, email) VALUES (?, ?, ?, ?)",
-            (data["usuario"], data["password"], data["rol"], data["email"]),
+            f"INSERT INTO {collection} (usuario, psw, role, email) VALUES (?, ?, ?, ?)",
+            (
+                data["usuario"],
+                generate_password_hash(data["psw"]),
+                data["role"],
+                data["email"],
+            ),
         )
         connection.commit()
         connection.close()
@@ -62,8 +68,8 @@ class SQLiteDBHandler(DatabaseAdapter):
             return
         cursor = connection.cursor()
         cursor.execute(
-            f"UPDATE {collection} SET password = ?, rol = ?, email = ? WHERE usuario = ?",
-            (data["password"], data["rol"], data["email"], condition["usuario"]),
+            f"UPDATE {collection} SET role = ?, email = ? WHERE usuario = ?",
+            (data["role"], data["email"], condition["usuario"]),
         )
         connection.commit()
         connection.close()
@@ -84,12 +90,10 @@ class SQLiteDBHandler(DatabaseAdapter):
         if connection is None:
             return False
         cursor = connection.cursor()
-        cursor.execute(
-            "SELECT * FROM user_info WHERE usuario = ? AND psw = ?", (username, psw)
-        )
+        cursor.execute("SELECT * FROM user_info WHERE usuario = ?", (username,))
         user = cursor.fetchone()
         connection.close()
-        if user:
+        if user and check_password_hash(user[2], psw):
             session["logged_in_user"] = username
             session["user_group"] = user[4]
             return True
