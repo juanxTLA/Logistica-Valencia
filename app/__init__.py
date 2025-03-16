@@ -1,11 +1,9 @@
 from flask import Flask, redirect, url_for
 
-from .config import Config
-from .models.mongo_db_handler import MongoDBHandler
-
 from app.models.sqlite_db_handler import SQLiteDBHandler
 
 from .config import Config
+from .models.mongo_db_handler import MongoDBHandler
 
 
 def create_app():
@@ -13,7 +11,7 @@ def create_app():
 
     sqlite_handler = SQLiteDBHandler(Config.SQLITE_URL)
     app.config["sqlite_handler"] = sqlite_handler
-    
+
     mongo_handler = MongoDBHandler(Config.MONGO_URL, "AyudaValencia")
     mongo_handler.connect()
     app.config["mongo_handler"] = mongo_handler
