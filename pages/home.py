@@ -32,20 +32,20 @@ card_enseres = html.A(
     href="/enseres",
     style={"text-decoration": "none"},
 )
-card_admin = html.A(
-    dbc.Card(
-        dbc.CardBody(
-            [
-                html.H4("Admin"),
-                html.P("Administra la plataforma"),
-            ]
-        ),
-        className="home-cards",
-    ),
-    href="/admin_usuarios",
-    style={"text-decoration": "none"},
-    className="home-cards",
-)
+# card_admin = html.A(
+#     dbc.Card(
+#         dbc.CardBody(
+#             [
+#                 html.H4("Admin"),
+#                 html.P("Administra la plataforma"),
+#             ]
+#         ),
+#         className="home-cards",
+#     ),
+#     href="/admin_usuarios",
+#     style={"text-decoration": "none"},
+#     className="home-cards",
+# )
 
 layout = html.Div(
     [
@@ -59,9 +59,8 @@ layout = html.Div(
             [
                 dbc.Row(
                     [
-                        dbc.Col(card_users, width=4),
-                        dbc.Col(card_enseres, width=4),
-                        dbc.Col(card_admin, width=4),
+                        dbc.Col(card_users, width=6),
+                        dbc.Col(card_enseres, width=6),
                     ]
                 )
             ]
